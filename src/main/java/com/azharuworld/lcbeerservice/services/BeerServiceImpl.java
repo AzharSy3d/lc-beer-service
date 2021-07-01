@@ -6,6 +6,7 @@ import com.azharuworld.lcbeerservice.web.controller.NotFoundException;
 import com.azharuworld.lcbeerservice.web.mappers.BeerMapper;
 import com.azharuworld.lcbeerservice.web.model.BeerDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -16,7 +17,7 @@ import java.util.UUID;
 public class BeerServiceImpl implements BeerService {
 
     private final BeerRepository beerRepository;
-    private final BeerMapper beerMapper;
+    private  BeerMapper beerMapper;
 
     @Override
     public BeerDto getById(UUID beerId) {

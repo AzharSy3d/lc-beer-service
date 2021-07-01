@@ -25,7 +25,7 @@ public class BeerController {
     }
 
     @PutMapping
-    public ResponseEntity<BeerDto> saveNewBeer(@RequestBody @Validated BeerDto beerDto){
+    public ResponseEntity saveNewBeer(@RequestBody @Validated BeerDto beerDto){
         return new ResponseEntity<>(beerService.saveNewBeer(beerDto),HttpStatus.CREATED);
     }
 
