@@ -1,13 +1,18 @@
 package com.azharuworld.lcbeerservice.services;
 
 import com.azharuworld.lcbeerservice.web.model.BeerDto;
+import com.azharuworld.lcbeerservice.web.model.BeerPagedList;
+import com.azharuworld.lcbeerservice.web.model.BeerStyleEnum;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.UUID;
 
 public interface BeerService {
-    Object getById(UUID beerId);
+    BeerDto getById(UUID beerId, Boolean showInventoryOnHand);
 
-    Object saveNewBeer(BeerDto beerDto);
+    BeerDto saveNewBeer(BeerDto beerDto);
 
-    Object updateBeer(UUID beerId, BeerDto beerDto);
+    BeerDto updateBeer(UUID beerId, BeerDto beerDto);
+    BeerDto getByUPC(String upc, Boolean showInventoryOnHand);
+    BeerPagedList listBeers(String beerName, BeerStyleEnum beerStyle, PageRequest pageRequest, Boolean showInventoryOnHand) ;
 }

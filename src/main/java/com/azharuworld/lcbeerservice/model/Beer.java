@@ -1,11 +1,9 @@
 package com.azharuworld.lcbeerservice.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
@@ -13,8 +11,8 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.UUID;
 
-
-@Data
+@Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -24,26 +22,25 @@ public class Beer {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID",strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(length = 36, nullable = false,updatable = false,columnDefinition = "varchar")
+    @Type(type="org.hibernate.type.UUIDCharType")
+    @Column(length = 36,columnDefinition = "varchar",updatable = false,nullable = false)
     private UUID id;
+
     @Version
-    private Integer version;
-
-
-    private String beerName;
-    private String beerStyle;
+    private Long version;
 
     @CreationTimestamp
     @Column(updatable = false)
     private Timestamp createdDate;
     @UpdateTimestamp
-    @Column(updatable = false)
-    private Timestamp updatedDate;
+    private Timestamp lastModifiedDate;
 
     @Column(unique = true)
     private String upc;
+    private String beerName;
+    private String beerStyle;
 
-    private BigDecimal price;
+    BigDecimal price;
 
     private Integer minOnHand;
     private Integer quantityToBrew;
