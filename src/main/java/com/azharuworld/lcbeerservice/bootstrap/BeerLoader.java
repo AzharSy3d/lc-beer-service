@@ -2,33 +2,31 @@ package com.azharuworld.lcbeerservice.bootstrap;
 
 import com.azharuworld.lcbeerservice.model.Beer;
 import com.azharuworld.lcbeerservice.repositories.BeerRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
-//@Component
+@Component
+@RequiredArgsConstructor
 public class BeerLoader implements CommandLineRunner {
 
     private final BeerRepository beerRepository;
-
-
     public static final String BEER_UPC_1 = "087162143151";
     public static final String BEER_UPC_2 = "087162143152";
     public static final String BEER_UPC_3 = "087162143153";
 
-    public BeerLoader(BeerRepository beerRepository) {
-        this.beerRepository = beerRepository;
-    }
 
     @Override
     public void run(String... args) throws Exception {
-        loadBeerData();
+        if(beerRepository.count() == 0){
+            loadBeerData();
+        }
     }
 
     private void loadBeerData() {
 
-        if(beerRepository.count() == 0) {
             beerRepository.save(Beer.builder()
                     .beerName("King Fisher")
                     .beerStyle("PALE_ALE")
@@ -45,7 +43,6 @@ public class BeerLoader implements CommandLineRunner {
                     .minOnHand(200)
                     .build());
 
-
             beerRepository.save(Beer.builder()
                     .beerName("Vodka")
                     .beerStyle("IPA")
@@ -54,5 +51,4 @@ public class BeerLoader implements CommandLineRunner {
                     .minOnHand(200)
                     .build());
         }
-    }
 }

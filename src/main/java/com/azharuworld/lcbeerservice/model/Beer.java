@@ -37,6 +37,7 @@ public class Beer {
 
     @Column(unique = true)
     private String upc;
+
     private String beerName;
     private String beerStyle;
 
