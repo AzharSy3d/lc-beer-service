@@ -28,7 +28,7 @@ public class BrewBeerListener {
         BeerDto beerDto = event.getBeerDto();
         Beer beer = beerRepository.getById(beerDto.getId());
         beerDto.setQuantityOnHand(beer.getQuantityToBrew());
-        log.info("BREWING_REQUEST_QUEUE is :");
+        log.info("BREWING_REQUEST_QUEUE Listening");
         NewInventoryEvent newInventoryEvent = new NewInventoryEvent(beerDto);
 
         jmsTemplate.convertAndSend(JmsConfig.NEW_INVENTORY_QUEUE, newInventoryEvent);

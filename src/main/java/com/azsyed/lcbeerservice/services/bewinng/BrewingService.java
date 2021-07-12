@@ -23,7 +23,7 @@ public class BrewingService {
     private final BeerMapper  beerMapper;
     private final BeerInventoryService beerInventoryService;
 
-    @Scheduled(fixedDelay=3000)
+    @Scheduled(fixedDelay=5000)
     public void checkForInventory(){
         List<Beer> beers = beerRepository.findAll();
 
@@ -33,7 +33,7 @@ public class BrewingService {
             log.info("minOnHand is :"+beer.getMinOnHand());
 
 
-            if(beer.getMinOnHand() >= invQOH){
+            if(beer.getMinOnHand() > invQOH){
                 log.info("qtyInHand is :"+invQOH);
                 jmsTemplate.convertAndSend(JmsConfig.BREWING_REQUEST_QUEUE,new BrewBeerEvent(beerMapper.beerToBeerDto(beer)));
             }
