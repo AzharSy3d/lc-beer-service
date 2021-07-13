@@ -1,4 +1,4 @@
-package com.azsyed.lcbeerservice.web.model;
+package com.azsyed.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;

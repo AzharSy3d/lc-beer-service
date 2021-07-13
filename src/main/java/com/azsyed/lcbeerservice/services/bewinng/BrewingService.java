@@ -1,7 +1,7 @@
 package com.azsyed.lcbeerservice.services.bewinng;
 
 import com.azsyed.lcbeerservice.config.JmsConfig;
-import com.azsyed.common.events.BrewBeerEvent;
+import com.azsyed.model.events.BrewBeerEvent;
 import com.azsyed.lcbeerservice.model.Beer;
 import com.azsyed.lcbeerservice.repositories.BeerRepository;
 import com.azsyed.lcbeerservice.services.inventory.BeerInventoryService;

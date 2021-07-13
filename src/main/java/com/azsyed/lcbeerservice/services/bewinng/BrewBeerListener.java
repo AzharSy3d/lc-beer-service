@@ -1,11 +1,11 @@
 package com.azsyed.lcbeerservice.services.bewinng;
 
 import com.azsyed.lcbeerservice.config.JmsConfig;
-import com.azsyed.common.events.BrewBeerEvent;
-import com.azsyed.common.events.NewInventoryEvent;
+import com.azsyed.model.events.BrewBeerEvent;
+import com.azsyed.model.events.NewInventoryEvent;
 import com.azsyed.lcbeerservice.model.Beer;
 import com.azsyed.lcbeerservice.repositories.BeerRepository;
-import com.azsyed.lcbeerservice.web.model.BeerDto;
+import com.azsyed.model.BeerDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jms.annotation.JmsListener;

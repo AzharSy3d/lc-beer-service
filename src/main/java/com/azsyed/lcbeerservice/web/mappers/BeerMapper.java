@@ -1,7 +1,7 @@
 package com.azsyed.lcbeerservice.web.mappers;
 
 import com.azsyed.lcbeerservice.model.Beer;
-import com.azsyed.lcbeerservice.web.model.BeerDto;
+import com.azsyed.model.BeerDto;
 import org.mapstruct.DecoratedWith;
 import org.mapstruct.Mapper;
 

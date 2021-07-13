@@ -1,6 +1,6 @@
-package com.azsyed.common.events;
+package com.azsyed.model.events;
 
-import com.azsyed.lcbeerservice.web.model.BeerDto;
+import com.azsyed.model.BeerDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

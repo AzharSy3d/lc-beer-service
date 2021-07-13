@@ -3,9 +3,9 @@ package com.azsyed.lcbeerservice.web.controller;
 
 import com.azsyed.lcbeerservice.services.BeerService;
 import com.azsyed.lcbeerservice.util.DataUtil;
-import com.azsyed.lcbeerservice.web.model.BeerDto;
-import com.azsyed.lcbeerservice.web.model.BeerPagedList;
-import com.azsyed.lcbeerservice.web.model.BeerStyleEnum;
+import com.azsyed.model.BeerDto;
+import com.azsyed.model.BeerPagedList;
+import com.azsyed.model.BeerStyleEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
