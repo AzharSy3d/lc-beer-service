@@ -1,12 +1,12 @@
 package com.azsyed.lcbeerservice.services;
 
+import com.azsyed.brewery.model.BeerDto;
+import com.azsyed.brewery.model.BeerPagedList;
+import com.azsyed.brewery.model.BeerStyleEnum;
 import com.azsyed.lcbeerservice.model.Beer;
 import com.azsyed.lcbeerservice.repositories.BeerRepository;
 import com.azsyed.lcbeerservice.web.controller.NotFoundException;
 import com.azsyed.lcbeerservice.web.mappers.BeerMapper;
-import com.azsyed.model.BeerDto;
-import com.azsyed.model.BeerPagedList;
-import com.azsyed.model.BeerStyleEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;

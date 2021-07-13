@@ -1,8 +1,8 @@
 package com.azsyed.lcbeerservice.web.mappers;
 
+import com.azsyed.brewery.model.BeerDto;
 import com.azsyed.lcbeerservice.model.Beer;
 import com.azsyed.lcbeerservice.services.inventory.BeerInventoryService;
-import com.azsyed.model.BeerDto;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**

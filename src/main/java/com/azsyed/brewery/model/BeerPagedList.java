@@ -1,4 +1,4 @@
-package com.azsyed.model;
+package com.azsyed.brewery.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

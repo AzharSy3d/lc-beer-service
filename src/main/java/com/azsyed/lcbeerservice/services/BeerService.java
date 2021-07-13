@@ -1,8 +1,8 @@
 package com.azsyed.lcbeerservice.services;
 
-import com.azsyed.model.BeerDto;
-import com.azsyed.model.BeerPagedList;
-import com.azsyed.model.BeerStyleEnum;
+import com.azsyed.brewery.model.BeerDto;
+import com.azsyed.brewery.model.BeerPagedList;
+import com.azsyed.brewery.model.BeerStyleEnum;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.UUID;

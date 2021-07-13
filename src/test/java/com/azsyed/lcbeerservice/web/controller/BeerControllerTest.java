@@ -1,9 +1,9 @@
 package com.azsyed.lcbeerservice.web.controller;
 
+import com.azsyed.brewery.model.BeerDto;
+import com.azsyed.brewery.model.BeerStyleEnum;
 import com.azsyed.lcbeerservice.bootstrap.BeerLoader;
 import com.azsyed.lcbeerservice.services.BeerService;
-import com.azsyed.model.BeerDto;
-import com.azsyed.model.BeerStyleEnum;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

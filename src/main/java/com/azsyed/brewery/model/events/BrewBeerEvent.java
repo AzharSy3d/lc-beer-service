@@ -1,6 +1,6 @@
-package com.azsyed.model.events;
+package com.azsyed.brewery.model.events;
 
-import com.azsyed.model.BeerDto;
+import com.azsyed.brewery.model.BeerDto;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
