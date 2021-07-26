@@ -28,7 +28,7 @@ public class BrewingService {
         List<Beer> beers = beerRepository.findAll();
 
         beers.forEach(beer -> {
-            Integer invQOH = beerInventoryService.getOnHandInventory(beer.getId());
+            Integer invQOH = beerInventoryService.getOnhandInventory(beer.getId());
             log.info("checkForInventory Scheduled");
             log.info("minOnHand is :"+beer.getMinOnHand());
 

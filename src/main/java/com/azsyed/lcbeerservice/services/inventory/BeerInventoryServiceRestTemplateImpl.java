@@ -41,7 +41,7 @@ public class BeerInventoryServiceRestTemplateImpl implements BeerInventoryServic
 
 
     @Override
-    public Integer getOnHandInventory(UUID beerId) {
+    public Integer getOnhandInventory(UUID beerId) {
         log.info("Calling getOnHandInventory.......");
 
         ResponseEntity<List<BeerInventoryDto>> responseEntity = restTemplate

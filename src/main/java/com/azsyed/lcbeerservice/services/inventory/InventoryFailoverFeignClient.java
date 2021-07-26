@@ -3,16 +3,16 @@ package com.azsyed.lcbeerservice.services.inventory;
 import com.azsyed.lcbeerservice.services.inventory.domain.BeerInventoryDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.List;
-import java.util.UUID;
 
-@FeignClient(name = "inventory-service")
-public interface BeerInventoryServiceFeign {
+@FeignClient(name = "inventory-failover")
+public interface InventoryFailoverFeignClient {
 
-    @RequestMapping(method = RequestMethod.GET, value = BeerInventoryServiceRestTemplateImpl.INVENTORY_PATH)
-    public ResponseEntity<List<BeerInventoryDto>> getOnHandInventory(@PathVariable UUID beerId);
+    @RequestMapping(method = RequestMethod.GET, value = "/inventory-failover")
+    ResponseEntity<List<BeerInventoryDto>> getOnhandInventory();
 }
+
+

@@ -17,11 +17,11 @@ import java.util.UUID;
 @Service
 public class BeerInventoryServiceFeignClientImpl implements BeerInventoryService {
 
-    private final BeerInventoryServiceFeign beerInventoryServiceFeign;
+    private final InventoryServiceFeignClient beerInventoryServiceFeign;
 
     @Override
-    public Integer getOnHandInventory(UUID beerId) {
-        ResponseEntity<List<BeerInventoryDto>> responseEntity = beerInventoryServiceFeign.getOnHandInventory(beerId);
+    public Integer getOnhandInventory(UUID beerId) {
+        ResponseEntity<List<BeerInventoryDto>> responseEntity = beerInventoryServiceFeign.getOnhandInventory(beerId);
 
         Integer quantityOnHand = Objects.requireNonNull(responseEntity.getBody())
                 .stream()
