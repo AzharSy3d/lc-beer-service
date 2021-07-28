@@ -5,8 +5,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 
+@EnableDiscoveryClient
 @Profile("local-discovery")
 @Configuration
-@EnableDiscoveryClient
-public class LocalDiscovery {
+public class LocalDiscoveryConfig {
 }

@@ -11,8 +11,6 @@ import java.util.List;
 @FeignClient(name = "inventory-failover")
 public interface InventoryFailoverFeignClient {
 
-    @RequestMapping(method = RequestMethod.GET, value = "/inventory-failover")
+    @RequestMapping(method = RequestMethod.GET, value = "inventory-failover")
     ResponseEntity<List<BeerInventoryDto>> getOnhandInventory();
 }
-
-
