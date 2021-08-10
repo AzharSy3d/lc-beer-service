@@ -1,0 +1,52 @@
+version: '3.8'
+services:
+  jms:
+    image: vromero/activemq-artemis
+    ports:
+      - "8161:8161"
+      - "61616:61616"
+    networks:
+      - brewery-network
+  zipkin-server:
+    image: openzipkin/zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - brewery-network
+  eureka:
+    image: azsyed/lc-brewary-eureka
+    ports:
+      - "8761:8761"
+    networks:
+      - brewery-network
+  config-server:
+    image: azsyed/lc-config-server
+    ports:
+      - "8888:8888"
+    depends_on:
+      - eureka
+    networks:
+      - brewery-network
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka:8761/eureka/
+  inventory:
+    image: azsyed/lc-beer-inventory-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - jms
+      - eureka
+      - config-server
+    networks:
+      - brewery-network
+    environment:
+      SPRING_PROFILES_ACTIVE: local-discovery,localmysql
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://eureka:8761/eureka/
+      SSPRING_ZIPKIN_BASEURL: http://zipkin
+      SPRING_DATASOURCE_URL: jdbc:mysql://host.docker.internal:3306/beerinventoryservice?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+      SPRING_ARTEMIS_HOST: jms
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: 'true'
+      restart: on-failure
+
+networks:
+  brewery-network:
