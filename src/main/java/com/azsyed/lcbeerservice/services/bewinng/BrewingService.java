@@ -34,6 +34,13 @@ public class BrewingService {
      *
      * @throws InsufficientInventoryException if there is not enough inventory for all items in the cart.
      */
+    
+    /**
+     * Checks if there is sufficient inventory for a given product.
+     * 
+     * @param productId The unique identifier of the product to check (String format).
+     * @return true if the product is in stock, false otherwise.
+     */
     public void checkForInventory(){
         List<Beer> beers = beerRepository.findAll();
 
