@@ -26,6 +26,16 @@ public class BeerServiceImpl implements BeerService {
 
     @Cacheable(cacheNames = "beerListCache", condition = "#showInventoryOnHand == false")
     @Override
+    
+    /**
+     * Lists beers based on the provided filters and pagination parameters. Optionally includes inventory on hand information.
+     *
+     * @param beerName        The name of the beer to filter by (case-insensitive).
+     * @param beerStyle       The style of the beer to filter by.
+     * @param pageRequest     Pagination details such as page number and size.
+     * @param showInventoryOnHand Whether to include inventory on hand information in the results.
+     * @return A BeerPagedList containing the filtered list of beers and pagination metadata.
+     */
     public BeerPagedList listBeers(String beerName, BeerStyleEnum beerStyle, PageRequest pageRequest, Boolean showInventoryOnHand) {
         BeerPagedList beerPagedList;
         Page<Beer> beerPage;
@@ -67,6 +77,14 @@ public class BeerServiceImpl implements BeerService {
 
     @Cacheable(cacheNames = "beerCache", key = "#beerId", condition = "#showInventoryOnHand == false")
     @Override
+    
+    /**
+     * Retrieves detailed information about a beer by its unique ID, optionally including inventory on hand details.
+     *
+     * @param beerId The unique identifier of the beer (UUID format).
+     * @param showInventoryOnHand If true, includes inventory on hand details in the response; otherwise, excludes them.
+     * @return A BeerDto object containing detailed information about the beer. Returns null if no beer is found with the given ID.
+     */
     public BeerDto getById(UUID beerId, Boolean showInventoryOnHand) {
         System.out.println("I am called beerCache");
         if (showInventoryOnHand) {
@@ -80,11 +98,26 @@ public class BeerServiceImpl implements BeerService {
 
 
     @Override
+    
+    /**
+     * Saves a new beer to the database.
+     *
+     * @param beerDto The data transfer object containing details of the beer to be saved.
+     * @return The saved BeerDto object with any server-generated fields (e.g., ID) populated.
+     */
     public BeerDto saveNewBeer(BeerDto beerDto) {
         return beerMapper.beerToBeerDto(beerRepository.save(beerMapper.beerDtoToBeer(beerDto)));
     }
 
     @Override
+    
+    /**
+     * Updates an existing beer record in the database with new information provided.
+     *
+     * @param beerId The unique identifier of the beer to be updated (UUID format).
+     * @param beerDto A data transfer object containing the updated details of the beer.
+     * @return An updated BeerDto object representing the modified beer record.
+     */
     public BeerDto updateBeer(UUID beerId, BeerDto beerDto)
     {
         Beer beer = beerRepository.findById(beerId).orElseThrow(NotFoundException::new);
@@ -100,6 +133,14 @@ public class BeerServiceImpl implements BeerService {
 
     @Cacheable(cacheNames = "beerUpcCache", key = "#upc", condition = "#showInventoryOnHand == false")
     @Override
+    
+    /**
+     * Retrieves the beer details associated with a given UPC code.
+     *
+     * @param upc The unique product code of the beer.
+     * @param showInventoryOnHand Indicates whether to include inventory on hand information in the response.
+     * @return A BeerDto object containing the beer details, or null if no beer is found with the specified UPC.
+     */
     public  BeerDto getByUPC(String upc, Boolean showInventoryOnHand){
 
         if(showInventoryOnHand){
