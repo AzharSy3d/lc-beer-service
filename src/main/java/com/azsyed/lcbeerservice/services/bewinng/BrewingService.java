@@ -34,6 +34,16 @@ public class BrewingService {
      *
      * @throws InsufficientInventoryException if there is not enough inventory for all items in the cart.
      */
+    /**
+     * /**
+     * * Checks the current inventory levels and updates any necessary stock.
+     * * This method ensures that all products have sufficient quantities to meet customer demand.
+     * * It also triggers restocking procedures if inventory falls below a predefined threshold.
+     * *
+     * * @return void
+     * */
+     */
+
     public void checkForInventory(){
         List<Beer> beers = beerRepository.findAll();
 
