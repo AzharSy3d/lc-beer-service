@@ -24,6 +24,16 @@ public class BrewingService {
     private final BeerInventoryService beerInventoryService;
 
     @Scheduled(fixedDelay=5000)
+    
+    /**
+     * Checks if there is sufficient inventory for all items in the cart.
+     *
+     * This method iterates through each item in the shopping cart and checks if the available quantity
+     * of each item meets or exceeds the required quantity. If any item is found to be out of stock, it
+     * throws an InsufficientInventoryException with a detailed message indicating which item is missing.
+     *
+     * @throws InsufficientInventoryException if there is not enough inventory for all items in the cart.
+     */
     public void checkForInventory(){
         List<Beer> beers = beerRepository.findAll();
 
