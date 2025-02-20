@@ -1,0 +1,218 @@
+import os
+import javalang
+import requests
+import subprocess
+import argparse
+from typing import List, Dict, Tuple
+
+# GitHub API endpoint
+GITHUB_API_URL = "https://api.github.com"
+OLLAMA_API_URL = "http://127.0.0.1:11434/api/generate"
+
+# --------------------------
+# Step 1: Parse CLI Arguments
+# --------------------------
+def parse_arguments() -> str:
+    parser = argparse.ArgumentParser(description="Generate documentation for a GitHub repository.")
+    parser.add_argument("--token", type=str, help="GitHub Personal Access Token (PAT).")
+    return parser.parse_args().token
+
+# --------------------------
+# Step 2: Fetch Available Repositories
+# --------------------------
+def fetch_repositories(token: str) -> List[Dict]:
+    headers = {"Authorization": f"Bearer {token}"}
+    response = requests.get(f"{GITHUB_API_URL}/user/repos", headers=headers)
+    response.raise_for_status()
+    return response.json()
+
+# --------------------------
+# Step 3: Prompt User for Repository Selection
+# --------------------------
+def select_repository(repos: List[Dict]) -> Dict:
+    print("Available Repositories:")
+    for i, repo in enumerate(repos):
+        print(f"{i + 1}. {repo['full_name']}")
+    choice = int(input("Select a repository (enter the number): ")) - 1
+    return repos[choice]
+
+# --------------------------
+# Step 4: Prompt User for Module Selection
+# --------------------------
+def select_module(repo_dir: str) -> str:
+    modules = [d for d in os.listdir(repo_dir) if os.path.isdir(os.path.join(repo_dir, d))]
+    print("Available Modules:")
+    for i, module in enumerate(modules):
+        print(f"{i + 1}. {module}")
+    choice = int(input("Select a module (enter the number): ")) - 1
+    return modules[choice]
+
+# --------------------------
+# Step 5: Clone Repository
+# --------------------------
+def clone_repository(repo_url: str, target_dir: str) -> None:
+    if not os.path.exists(target_dir):
+        subprocess.run(["git", "clone", repo_url, target_dir], check=True)
+    else:
+        print(f"Directory '{target_dir}' already exists. Skipping clone.")
+
+# --------------------------
+# Step 7: Extract Class Info
+# --------------------------
+def extract_class_info(tree: javalang.tree.CompilationUnit) -> List[Dict]:
+    classes = []
+    for _, node in tree.filter(javalang.tree.ClassDeclaration):
+        class_info = {
+            "name": node.name,
+            "methods": [
+                {
+                    "name": method.name,
+                    "return_type": method.return_type.name if method.return_type else "void",
+                    "parameters": [
+                        {"type": param.type.name, "name": param.name} for param in method.parameters
+                    ],
+                    "annotations": [annotation.name for annotation in method.annotations] if hasattr(method, "annotations") else []
+                }
+                for method in node.methods
+            ]
+        }
+        classes.append(class_info)
+    return classes
+
+# --------------------------
+# Step 8: Generate Context-Aware Javadoc
+# --------------------------
+def generate_documentation(class_name: str, method: Dict) -> str:
+    # Build a detailed prompt with method context
+    params = ", ".join([f"{param['type']} {param['name']}" for param in method["parameters"]])
+    return_type = method["return_type"]
+    
+    prompt = (
+        f"Generate a Javadoc comment for the method below. Focus on what the method actually does, "
+        f"not its name. Avoid generic phrases like 'This method...'. Be specific to the parameters and return type.\n\n"
+        f"Method Signature: {return_type} {method['name']}({params})\n"
+        f"Example Template:\n"
+        f"\n/**\n"
+        f" * Retrieves a user by their unique ID from the database.\n"
+        f" *\n"
+        f" * @param userId The unique identifier of the user (UUID format).\n"
+        f" * @return The User object if found; throws NotFoundException otherwise.\n"
+        f" */\n\n"
+        f"Your Javadoc:"
+    )
+    
+    payload = {"model": "qwen2.5-coder:7b", "prompt": prompt, "stream": False}
+    response = requests.post(OLLAMA_API_URL, json=payload)
+    response.raise_for_status()
+    doc = response.json().get("response", "No documentation generated.")
+    
+    # Clean up the response
+    doc = doc.replace("```java", "").replace("```", "").strip()
+    return f"\n{doc}"
+
+# --------------------------
+# Step 9: Add Javadoc to Methods (Above Annotations)
+# --------------------------
+def add_javadoc_to_methods(file_path: str, class_info: Dict) -> None:
+    with open(file_path, "r", encoding="utf-8") as file:
+        lines = file.readlines()
+
+    for method in class_info["methods"]:
+        documentation = generate_documentation(class_info["name"], method)
+        method_signature = f"{method['return_type']} {method['name']}("
+
+        # Find the method signature or annotations
+        for i, line in enumerate(lines):
+            if method_signature in line:
+                # Check if there are annotations above the method
+                annotation_start = i
+                while annotation_start > 0 and (
+                    lines[annotation_start - 1].strip().startswith("@") or
+                    lines[annotation_start - 1].strip() == ""
+                ):
+                    annotation_start -= 1
+                # Determine the indentation level of the method
+                indent = " " * (len(line) - len(line.lstrip()))
+                # Format the Javadoc with the correct indentation
+                method_javadoc = f"{indent}/**\n"
+                method_javadoc += f"{indent} * {documentation.split('\n')[0]}\n"
+
+
+                # Insert Javadoc above the annotations
+                # indent = " " * (len(lines[annotation_start]) - len(lines[annotation_start].lstrip()))
+                indent = " " * (len(line) - len(line.lstrip()))
+                javadoc_lines = [f"{indent}{line}" for line in documentation.split("\n")]
+                javadoc = "\n".join(javadoc_lines) + "\n"
+                lines.insert(annotation_start, javadoc)
+                break
+
+    with open(file_path, "w", encoding="utf-8") as file:
+        file.writelines(lines)
+
+
+
+# --------------------------
+# Step 8: Create Branch and PR
+# --------------------------
+def create_branch_and_pr(repo_dir: str, repo_name: str, token: str) -> None:
+    branch_name = input("Enter the new branch name: ").strip()
+    commit_message = input("Enter commit message: ").strip()
+
+    subprocess.run(["git", "checkout", "-b", branch_name], cwd=repo_dir, check=True)
+    subprocess.run(["git", "add", "."], cwd=repo_dir, check=True)
+    subprocess.run(["git", "commit", "-m", commit_message], cwd=repo_dir, check=True)
+    subprocess.run(["git", "push", "origin", branch_name], cwd=repo_dir, check=True)
+
+    headers = {"Authorization": f"Bearer {token}", "Accept": "application/vnd.github.v3+json"}
+    payload = {"title": commit_message, "head": branch_name, "base": "main", "body": commit_message}
+    response = requests.post(f"{GITHUB_API_URL}/repos/{repo_name}/pulls", headers=headers, json=payload)
+    response.raise_for_status()
+    print(f"Pull request created: {response.json()['html_url']}")
+
+# --------------------------
+# Main Script
+# --------------------------
+if __name__ == "__main__":
+    token = parse_arguments() or input("Enter your GitHub Personal Access Token (PAT): ").strip()
+    repos = fetch_repositories(token)
+    repo = select_repository(repos)
+    repo_url, repo_name = repo["clone_url"], repo["full_name"]
+    target_dir = "repo"
+    
+    clone_repository(repo_url, target_dir)
+    module_name = select_module(target_dir)
+    module_dir = os.path.join(target_dir, module_name)
+    
+    service_classes = []
+    for root, _, files in os.walk(module_dir):
+        for file in files:
+            if not file.endswith(".java"):
+                continue
+            file_path = os.path.join(root, file)
+            try:
+                with open(file_path, "r", encoding="utf-8") as f:
+                    file_content = f.read()
+                tree = javalang.parse.parse(file_content)
+            except (javalang.parser.JavaSyntaxError, javalang.tokenizer.LexerError):
+                continue
+
+            for _, node in tree.filter(javalang.tree.ClassDeclaration):
+                if node.name.endswith("Service"):
+                    class_info = {
+                        "name": node.name,
+                        "methods": [
+                            {
+                                "name": m.name,
+                                "return_type": m.return_type.name if m.return_type else "void",
+                                "parameters": [{"type": p.type.name, "name": p.name} for p in m.parameters]
+                            }
+                            for m in node.methods
+                        ]
+                    }
+                    service_classes.append(class_info)
+                    add_javadoc_to_methods(file_path, class_info)
+    
+    if input("Do you want to create a new branch and PR for the changes? (y/n): ").strip().lower() == "y":
+        create_branch_and_pr(target_dir, repo_name, token)
+
+    print("Documentation generation completed!")
