@@ -10,14 +10,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-
-/**
- * * Created by AzSyed on 4/25/2021
- */
 
 @Profile("!local-discovery")
 @Slf4j
@@ -26,6 +21,7 @@ import java.util.UUID;
 public class BeerInventoryServiceRestTemplateImpl implements BeerInventoryService {
 
     public static final String INVENTORY_PATH = "/api/v1/beer/{beerId}/inventory";
+
     private final RestTemplate restTemplate;
 
     private String beerInventoryServiceHost;
@@ -38,26 +34,12 @@ public class BeerInventoryServiceRestTemplateImpl implements BeerInventoryServic
         this.beerInventoryServiceHost = beerInventoryServiceHost;
     }
 
-
-
     @Override
     public Integer getOnhandInventory(UUID beerId) {
         log.info("Calling getOnHandInventory.......");
-
-        ResponseEntity<List<BeerInventoryDto>> responseEntity = restTemplate
-                .exchange(beerInventoryServiceHost + INVENTORY_PATH
-                        , HttpMethod.GET
-                        , null
-                        , new ParameterizedTypeReference<List<BeerInventoryDto>>() {
-        },(Object)beerId);
-
-        Integer onHand = Objects.requireNonNull(responseEntity.getBody())
-                .stream()
-                .mapToInt(BeerInventoryDto::getQuantityOnHand)
-                .sum();
-
+        ResponseEntity<List<BeerInventoryDto>> responseEntity = restTemplate.exchange(beerInventoryServiceHost + INVENTORY_PATH, HttpMethod.GET, null, new ParameterizedTypeReference<List<BeerInventoryDto>>() {
+        }, (Object) beerId);
+        Integer onHand = Objects.requireNonNull(responseEntity.getBody()).stream().mapToInt(BeerInventoryDto::getQuantityOnHand).sum();
         return onHand;
     }
-
-
 }
